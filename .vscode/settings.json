@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "jaaava/gson-2.13.1.jar",
+        "jaaava/json-20250107 (1).jar"
+    ]
+}
