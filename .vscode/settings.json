@@ -2,6 +2,9 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "jaaava/gson-2.13.1.jar",
-        "jaaava/json-20250107 (1).jar"
+        "jaaava/json-20250107 (1).jar",
+        "gson-2.13.1.jar",
+        "dotenv-java-2.3.2.jar",
+        "slf4j-api-1.7.36.jar"
     ]
 }
