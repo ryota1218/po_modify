@@ -4,6 +4,9 @@
         "jaaava/gson-2.13.1.jar",
         "jaaava/json-20250107 (1).jar",
         "c:\\Users\\243202\\Desktop\\gson-2.13.1.jar",
-        "c:\\Users\\243202\\Desktop\\json-20250107.jar"
+        "c:\\Users\\243202\\Desktop\\json-20250107.jar",
+        "gson-2.13.1.jar",
+        "dotenv-java-2.3.2.jar",
+        "slf4j-api-1.7.36.jar"
     ]
 }
