@@ -1,0 +1,89 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "gemini",
+            "request": "launch",
+            "mainClass": "gemini",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
+            "name": "RakutenRecipeApiExample",
+            "request": "launch",
+            "mainClass": "RakutenRecipeApiExample",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
+            "name": "VisionApiHelper",
+            "request": "launch",
+            "mainClass": "VisionApiHelper",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
+            "name": "INaturalistSwingSlideshow",
+            "request": "launch",
+            "mainClass": "INaturalistSwingSlideshow",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
+            "name": "INaturalistSearchClient",
+            "request": "launch",
+            "mainClass": "INaturalistSearchClient",
+            "projectName": "po_modify_2ae47e7a",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "ApiNinjasExercisesClient",
+            "request": "launch",
+            "mainClass": "ApiNinjasExercisesClient",
+            "projectName": "po_modify_2ae47e7a",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "WgerCategoryExercise",
+            "request": "launch",
+            "mainClass": "WgerCategoryExercise",
+            "projectName": "po_modify_2ae47e7a",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "WgerApiSample",
+            "request": "launch",
+            "mainClass": "WgerApiSample",
+            "projectName": "po_modify_2ae47e7a",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Launch Current File (UTF-8)",
+            "request": "launch",
+            "mainClass": "${file}",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "PokeQ",
+            "request": "launch",
+            "mainClass": "PokeQ",
+            "projectName": "po_modify_2ae47e7a",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        }
+    ]
+}
