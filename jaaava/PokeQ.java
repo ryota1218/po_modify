@@ -68,7 +68,8 @@ public class PokeQ extends JFrame {
                 // ターミナル入出力はワーカースレッドで
                 System.out.println("このポケモンの名前は？（カタカナで）");
                 System.out.print("こたえを入力: ");
-                java.util.Scanner sc = new java.util.Scanner(System.in, "shift_jis");
+                // コンソールからの入力をUTF-8で受け取るように修正
+                java.util.Scanner sc = new java.util.Scanner(System.in, java.nio.charset.StandardCharsets.UTF_8);
                 String userAnswer = sc.nextLine().trim();
                 checkAnswerTerminal(userAnswer);
             } catch (Exception e) {
@@ -99,7 +100,8 @@ public class PokeQ extends JFrame {
                 System.out.println("ちがうよ！もう一度考えてみて！");
             }
             System.out.print("こたえを入力: ");
-            java.util.Scanner sc = new java.util.Scanner(System.in, "UTF-8");
+            // こちらもStandardCharsets.UTF_8に統一
+            java.util.Scanner sc = new java.util.Scanner(System.in, java.nio.charset.StandardCharsets.UTF_8);
             String nextAnswer = sc.nextLine().trim();
             checkAnswerTerminal(nextAnswer);
         }

@@ -1,0 +1,8 @@
+筋トレ                      UaixcjZGQWmp5xEEYc8hWA==YclDO90PdF4FpoNZ
+MyMemory Translation API    不要
+DeepL API                   3a37df0b-08c3-4e98-8182-13bf06175705:fx
+iNaturalist API             不要
+PokeApi                     不要
+Tomorrow.io                 mVjmcBBh9TBDaFfH1x9VQNYvWLKHiLTb
+Visual Crossing Weather     Z3G2W5MBQ6UN2SQM3RETULC6Q
+WeatherAPI                  415daaf76e124a4a96044142250407

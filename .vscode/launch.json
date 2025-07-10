@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "WeatherAPIDemo",
+            "request": "launch",
+            "mainClass": "WeatherAPIDemo",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
             "name": "gemini",
             "request": "launch",
             "mainClass": "gemini",

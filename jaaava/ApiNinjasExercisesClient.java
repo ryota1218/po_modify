@@ -22,8 +22,7 @@ public class ApiNinjasExercisesClient {
 
     // API NinjasのURLと自分のAPIキーを設定
     private static final String API_URL = "https://api.api-ninjas.com/v1/exercises";
-    // !!! 必ずご自身で取得したAPIキーに置き換えてください !!!
-    // APIキーは https://api-ninjas.com/ から無料で取得できます。
+    // 環境変数からAPIキーを読み込む
     private static final String NINJAS_API_KEY = "UaixcjZGQWmp5xEEYc8hWA==YclDO90PdF4FpoNZ";
 
     // MyMemory Translation API (APIキー不要)
@@ -147,39 +146,49 @@ public class ApiNinjasExercisesClient {
             return Optional.empty();
         } else {
             // DeepL API（500文字超）
-            String requestBody = "auth_key=" + DEEPL_API_KEY + "&text=" + URLEncoder.encode(textToTranslate, StandardCharsets.UTF_8) + "&source_lang=EN&target_lang=JA";
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(DEEPL_API_URL))
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                try {
-                    JsonObject obj = gson.fromJson(response.body(), JsonObject.class);
-                    JsonArray translations = obj.getAsJsonArray("translations");
-                    if (translations != null && translations.size() > 0) {
-                        JsonObject trans = translations.get(0).getAsJsonObject();
-                        String ja = trans.get("text").getAsString();
-                        return Optional.of(ja);
-                    }
-                } catch (Exception e) {
-                    System.err.println("DeepL APIのJSONパースに失敗: " + response.body());
-                }
-            } else {
-                System.err.println("DeepL APIへのリクエストが失敗: " + response.statusCode() + ", Body: " + response.body());
-            }
-            return Optional.empty();
+            return translateWithDeepL(textToTranslate);
         }
+    }
+
+    /**
+     * DeepL APIを使用してテキストを翻訳するヘルパーメソッド
+     * @param textToTranslate 翻訳するテキスト
+     * @return 翻訳されたテキストを含むOptional、失敗した場合はempty
+     */
+    private Optional<String> translateWithDeepL(String textToTranslate) throws IOException, InterruptedException {
+        if (textToTranslate == null || textToTranslate.isEmpty()) {
+            return Optional.of(""); // 空の入力には空の文字列を返す
+        }
+        String requestBody = "auth_key=" + DEEPL_API_KEY + "&text=" + URLEncoder.encode(textToTranslate, StandardCharsets.UTF_8) + "&source_lang=EN&target_lang=JA";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(DEEPL_API_URL))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            try {
+                JsonObject obj = gson.fromJson(response.body(), JsonObject.class);
+                JsonArray translations = obj.getAsJsonArray("translations");
+                if (translations != null && !translations.isEmpty()) {
+                    return Optional.of(translations.get(0).getAsJsonObject().get("text").getAsString());
+                }
+            } catch (Exception e) {
+                System.err.println("DeepL APIのJSONパースに失敗: " + response.body());
+            }
+        } else {
+            System.err.println("DeepL APIへのリクエストが失敗: " + response.statusCode() + ", Body: " + response.body());
+        }
+        return Optional.empty();
     }
 
     /**
      * アプリケーションのメインロジックを実行する
      */
     public void run() {
-        Scanner scanner = new Scanner(System.in,"shift_jis");
-
-        try {
+        // コンソールからの入力をUTF-8で受け取るように修正
+        // try-with-resources構文で、scannerが自動的にクローズされるようにする
+        try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
             System.out.println("--- 検索可能な筋肉一覧 ---");
             for (Map.Entry<String, List<String>> entry : CATEGORIZED_MUSCLES.entrySet()) {
                 System.out.println("\n" + entry.getKey());
@@ -210,80 +219,10 @@ public class ApiNinjasExercisesClient {
                 for (int i = 0; i < exercises.size(); i++) {
                     Exercise ex = exercises.get(i);
 
-                    // エクササイズ名はDeepLで翻訳
-                    String translatedName = "(翻訳失敗)";
-                    try {
-                        if (ex.name() != null && !ex.name().isEmpty()) {
-                            String requestBody = "auth_key=" + DEEPL_API_KEY + "&text=" + URLEncoder.encode(ex.name(), StandardCharsets.UTF_8) + "&source_lang=EN&target_lang=JA";
-                            HttpRequest deeplRequest = HttpRequest.newBuilder()
-                                    .uri(URI.create(DEEPL_API_URL))
-                                    .header("Content-Type", "application/x-www-form-urlencoded")
-                                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                                    .build();
-                            HttpResponse<String> deeplResponse = client.send(deeplRequest, HttpResponse.BodyHandlers.ofString());
-                            if (deeplResponse.statusCode() == 200) {
-                                JsonObject obj = gson.fromJson(deeplResponse.body(), JsonObject.class);
-                                JsonArray translations = obj.getAsJsonArray("translations");
-                                if (translations != null && translations.size() > 0) {
-                                    JsonObject trans = translations.get(0).getAsJsonObject();
-                                    translatedName = trans.get("text").getAsString();
-                                }
-                            } else {
-                                System.err.println("DeepL APIへのリクエストが失敗: " + deeplResponse.statusCode() + ", Body: " + deeplResponse.body());
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.err.println("DeepL APIでエクササイズ名翻訳時にエラー: " + e.getMessage());
-                    }
-
-                    // 難易度・器具はDeepLで翻訳
-                    String translatedDifficulty = "(翻訳失敗)";
-                    try {
-                        if (ex.difficulty() != null && !ex.difficulty().isEmpty()) {
-                            String requestBody = "auth_key=" + DEEPL_API_KEY + "&text=" + URLEncoder.encode(ex.difficulty(), StandardCharsets.UTF_8) + "&source_lang=EN&target_lang=JA";
-                            HttpRequest deeplRequest = HttpRequest.newBuilder()
-                                    .uri(URI.create(DEEPL_API_URL))
-                                    .header("Content-Type", "application/x-www-form-urlencoded")
-                                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                                    .build();
-                            HttpResponse<String> deeplResponse = client.send(deeplRequest, HttpResponse.BodyHandlers.ofString());
-                            if (deeplResponse.statusCode() == 200) {
-                                JsonObject obj = gson.fromJson(deeplResponse.body(), JsonObject.class);
-                                JsonArray translations = obj.getAsJsonArray("translations");
-                                if (translations != null && translations.size() > 0) {
-                                    JsonObject trans = translations.get(0).getAsJsonObject();
-                                    translatedDifficulty = trans.get("text").getAsString();
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.err.println("DeepL APIで難易度翻訳時にエラー: " + e.getMessage());
-                    }
-
-                    String translatedEquipment = "(翻訳失敗)";
-                    try {
-                        if (ex.equipment() != null && !ex.equipment().isEmpty()) {
-                            String requestBody = "auth_key=" + DEEPL_API_KEY + "&text=" + URLEncoder.encode(ex.equipment(), StandardCharsets.UTF_8) + "&source_lang=EN&target_lang=JA";
-                            HttpRequest deeplRequest = HttpRequest.newBuilder()
-                                    .uri(URI.create(DEEPL_API_URL))
-                                    .header("Content-Type", "application/x-www-form-urlencoded")
-                                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                                    .build();
-                            HttpResponse<String> deeplResponse = client.send(deeplRequest, HttpResponse.BodyHandlers.ofString());
-                            if (deeplResponse.statusCode() == 200) {
-                                JsonObject obj = gson.fromJson(deeplResponse.body(), JsonObject.class);
-                                JsonArray translations = obj.getAsJsonArray("translations");
-                                if (translations != null && translations.size() > 0) {
-                                    JsonObject trans = translations.get(0).getAsJsonObject();
-                                    translatedEquipment = trans.get("text").getAsString();
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.err.println("DeepL APIで器具翻訳時にエラー: " + e.getMessage());
-                    }
-
-                    // 手順は従来通り500文字超はDeepL、500文字以下はMyMemory
+                    // 各項目を翻訳
+                    String translatedName = translateWithDeepL(ex.name()).orElse("(翻訳失敗)");
+                    String translatedDifficulty = translateWithDeepL(ex.difficulty()).orElse("(翻訳失敗)");
+                    String translatedEquipment = translateWithDeepL(ex.equipment()).orElse("(翻訳失敗)");
                     String translatedInstructions = translateText(ex.instructions()).orElse("(翻訳失敗)");
 
                     System.out.printf("\n%d. %s%n", (i + 1), ex.name());
@@ -296,16 +235,16 @@ public class ApiNinjasExercisesClient {
         } catch (IOException | InterruptedException e) {
             System.err.println("リクエストの送信中にエラーが発生しました。");
             e.printStackTrace();
-        } finally {
-            scanner.close();
         }
     }
 
     public static void main(String[] args) {
         // APIキーが設定されているかチェック
-        if (NINJAS_API_KEY.equals("YOUR_API_KEY_HERE") || NINJAS_API_KEY.isEmpty()) {
-            System.err.println("エラー: APIキーが設定されていません。");
-            System.err.println("ApiNinjasExercisesClient.java ファイル内の NINJAS_API_KEY をあなたのキーに置き換えてください。");
+        if (NINJAS_API_KEY == null || NINJAS_API_KEY.isEmpty() || DEEPL_API_KEY == null || DEEPL_API_KEY.isEmpty()) {
+            System.err.println("エラー: 必要なAPIキーが環境変数に設定されていません。");
+            System.err.println("以下の環境変数を設定してください:");
+            System.err.println("  - NINJAS_API_KEY");
+            System.err.println("  - DEEPL_API_KEY");
             return;
         }
 

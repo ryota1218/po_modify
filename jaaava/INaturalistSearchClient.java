@@ -62,19 +62,21 @@ public class INaturalistSearchClient {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in, "shift_jis");
-        System.out.print("検索したい生物名（和名または英名）を入力してください: ");
-        String query = scanner.nextLine().trim();
-        if (query.isEmpty()) {
-            System.out.println("生物名が入力されていません。");
-            return;
-        }
-        INaturalistSearchClient client = new INaturalistSearchClient();
-        try {
-            client.searchObservations(query);
-        } catch (Exception e) {
-            System.err.println("検索中にエラーが発生しました。");
-            e.printStackTrace();
+        // コンソールからの入力をUTF-8で受け取るように修正
+        try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
+            System.out.print("検索したい生物名（和名または英名）を入力してください: ");
+            String query = scanner.nextLine().trim();
+            if (query.isEmpty()) {
+                System.out.println("生物名が入力されていません。");
+                return;
+            }
+            INaturalistSearchClient client = new INaturalistSearchClient();
+            try {
+                client.searchObservations(query);
+            } catch (Exception e) {
+                System.err.println("検索中にエラーが発生しました。");
+                e.printStackTrace();
+            }
         }
     }
 }
