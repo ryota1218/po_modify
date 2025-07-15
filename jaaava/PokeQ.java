@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.text.Normalizer;
 import java.util.Optional;
 
 public class PokeQ extends JFrame {
@@ -68,9 +67,8 @@ public class PokeQ extends JFrame {
                 // ターミナル入出力はワーカースレッドで
                 System.out.println("このポケモンの名前は？（カタカナで）");
                 System.out.print("こたえを入力: ");
-                // コンソールからの入力をUTF-8で受け取るように修正
-                java.util.Scanner sc = new java.util.Scanner(System.in, java.nio.charset.StandardCharsets.UTF_8);
-                String userAnswer = sc.nextLine().trim();
+                Optional<String> userAnswerOpt = EncodingConverter.readLineFromTerminal("MS932");
+                String userAnswer = userAnswerOpt.orElse("").trim();
                 checkAnswerTerminal(userAnswer);
             } catch (Exception e) {
                 System.out.println("エラー: " + e.getMessage());
@@ -81,9 +79,9 @@ public class PokeQ extends JFrame {
     // ターミナル用の判定・ヒント表示
     private void checkAnswerTerminal(String userAnswer) {
         if (userAnswer.isEmpty()) return;
-        String normalizedUser = toKatakana(Normalizer.normalize(userAnswer, Normalizer.Form.NFKC))
+        String normalizedUser = toKatakana(java.text.Normalizer.normalize(userAnswer, java.text.Normalizer.Form.NFKC))
             .replaceAll("[^\u30A0-\u30FFー]", "");
-        String normalizedCorrect = Normalizer.normalize(correctName, Normalizer.Form.NFC)
+        String normalizedCorrect = java.text.Normalizer.normalize(correctName, java.text.Normalizer.Form.NFC)
             .replaceAll("[^\u30A0-\u30FFー]", "");
         if (normalizedUser.equals(normalizedCorrect)) {
             System.out.println("正解！すごい！");
@@ -100,9 +98,8 @@ public class PokeQ extends JFrame {
                 System.out.println("ちがうよ！もう一度考えてみて！");
             }
             System.out.print("こたえを入力: ");
-            // こちらもStandardCharsets.UTF_8に統一
-            java.util.Scanner sc = new java.util.Scanner(System.in, java.nio.charset.StandardCharsets.UTF_8);
-            String nextAnswer = sc.nextLine().trim();
+            Optional<String> nextAnswerOpt = EncodingConverter.readLineFromTerminal("MS932");
+            String nextAnswer = nextAnswerOpt.orElse("").trim();
             checkAnswerTerminal(nextAnswer);
         }
     }

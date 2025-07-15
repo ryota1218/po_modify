@@ -8,7 +8,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+import java.util.Optional;
+// ...existing code...
+// EncodingConverterはデフォルトパッケージなのでimport不要
 
 /**
  * iNaturalist APIを使った生物検索CLIサンプル
@@ -62,21 +64,20 @@ public class INaturalistSearchClient {
     }
 
     public static void main(String[] args) {
-        // コンソールからの入力をUTF-8で受け取るように修正
-        try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
-            System.out.print("検索したい生物名（和名または英名）を入力してください: ");
-            String query = scanner.nextLine().trim();
-            if (query.isEmpty()) {
-                System.out.println("生物名が入力されていません。");
-                return;
-            }
-            INaturalistSearchClient client = new INaturalistSearchClient();
-            try {
-                client.searchObservations(query);
-            } catch (Exception e) {
-                System.err.println("検索中にエラーが発生しました。");
-                e.printStackTrace();
-            }
+        // Shift_JISで入力を受け取り、UTF-8で検索
+        System.out.print("検索したい生物名（Shift_JIS）を入力してください: ");
+        Optional<String> sjisInput = EncodingConverter.readLineFromTerminal("MS932");
+        if (sjisInput.isEmpty() || sjisInput.get().isBlank()) {
+            System.out.println("生物名が入力されていません。");
+            return;
+        }
+        String query = sjisInput.get(); // Java内部表現はUTF-16なのでそのまま検索OK
+        INaturalistSearchClient client = new INaturalistSearchClient();
+        try {
+            client.searchObservations(query);
+        } catch (Exception e) {
+            System.err.println("検索中にエラーが発生しました。");
+            e.printStackTrace();
         }
     }
 }
