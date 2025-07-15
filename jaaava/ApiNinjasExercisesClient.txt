@@ -1,0 +1,90 @@
+リクエストURLの作成:
+引数で受け取った筋肉名（例: "biceps"）を、URLで安全に扱えるようにエンコードします。
+APIの基本URL (https://api.api-ninjas.com/v1/exercises) に、?muscle= とエンコードした筋肉名を追加して、APIにリクエストを送るための完全なURLを生成します。
+
+HTTPリクエストの準備と送信:
+HttpClient を使って、先ほど作成したURLへのGETリクエストを作成します。
+その際、header("X-Api-Key", ...) の部分で、APIを利用するための認証キーをリクエストに含めています。
+作成したリクエストをAPIサーバーに送信し、レスポンス（結果）を受け取ります。
+
+レスポンスの処理:
+成功した場合 (ステータスコード 200): APIから返ってきたJSON形式のテキストデータを、Gsonライブラリを使ってJavaのオブジェクト（List<Exercise>）に変換し、そのリストを返します。
+失敗した場合 (ステータスコード 200以外): エラーメッセージをコンソールに出力し、空のリストを返します。
+これにより、呼び出し元でエラーが発生することなく、結果が0件だった場合と同じように処理を続けられます。
+
+この関数を呼び出すには、ApiNinjasExercisesClient クラスのインスタンスを作成し、fetchExercisesByMuscle メソッドを呼び出します
+引数 muscle には、英語の筋肉名を文字列で指定します。
+
+この関数が返すデータは List<Exercise> 型です。これは、Exercise というデータ構造の集まり（リスト）です。
+Exercise は record として以下のように定義されており,一つのエクササイズが持つ情報を表します。
+public record Exercise(
+        String name,          // エクササイズの名前 (例: "Dumbbell bicep curl")
+        String type,          // 種類 (例: "strength")
+        String muscle,        // 対象の筋肉 (例: "biceps")
+        String equipment,     // 必要な器具 (例: "dumbbell")
+        String difficulty,    // 難易度 (例: "beginner")
+        String instructions   // 手順の説明
+) {}
+つまりfetchExercisesByMuscle("biceps") を呼び出すと、以下のような構造のデータが得られます。
+[ // List<Exercise>
+  { // Exercise オブジェクト 1
+    name: "Barbell curl",
+    type: "strength",
+    muscle: "biceps",
+    equipment: "barbell",
+    difficulty: "beginner",
+    instructions: "Stand up with your torso upright while holding a barbell..."
+  },
+  { // Exercise オブジェクト 2
+    name: "Dumbbell bicep curl",
+    type: "strength",
+    muscle: "biceps",
+    equipment: "dumbbell",
+    difficulty: "beginner",
+    instructions: "Stand up straight with a dumbbell in each hand..."
+  },
+  // ... 他の「上腕二頭筋」のエクササイズが続く
+]
+
+
+MyMemory
+https://api.mymemory.translated.net/get?q=翻訳したいテキスト&langpair=en|ja
+
+ここで指定されているパラメータは2つです。
+
+1, q パラメータ
+役割: 翻訳したいテキストそのものを指定します。
+指定方法: q=Hello のように指定します。
+コードでは URLEncoder.encode を使って、スペースや特殊文字をURLで安全に扱える形式（例: Hello World → Hello+World）に変換しています。
+
+2, langpair パラメータ
+
+役割: 「どの言語からどの言語へ」翻訳するかを指定します。
+指定方法: langpair=元の言語|翻訳先の言語 という形式で指定します。
+このコードでは「英語（en）から日本語（ja）へ」の翻訳を指示しています。
+コード内の %7C は、パイプ文字 | をURLエンコードで安全に扱える形式したものです。
+
+MyMemory APIからデータが正常に返ってくると、その中身は このようなJSON形式のテキストになっています。
+{
+  "responseData": {
+    "translatedText": "こんにちは",
+    "match": 1
+  },
+  "responseDetails": "",
+  "responseStatus": 200,
+  "matches": [
+    // ... 他の翻訳候補など
+  ]
+}
+この中でが一番必要な情報は、responseData の中にある translatedText の値（この例では「こんにちは」）です
+このJSONデータをJavaで簡単に扱えるようにするため、二つの record を使ってデータの受け皿を定義しています。
+
+public record MyMemoryResponse(ResponseData responseData) {}
+public record ResponseData(String translatedText) {}
+
+MyMemoryResponse レコードは、JSON全体のうち "responseData": { ... } の部分を格納します。
+ResponseData レコードは、翻訳されたテキストがある { "translatedText": "..." } の部分を格納します。
+
+そして、gson.fromJson(response.body(), MyMemoryResponse.class); というコードで、
+APIから受け取ったJSON文字列を、この MyMemoryResponse オブジェクトに自動的に変換しています。
+最終的に、translated.responseData().translatedText() という形で、ネストされたデータの中から目的の「翻訳されたテキスト」を取り出せます
