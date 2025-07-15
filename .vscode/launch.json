@@ -6,6 +6,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EncodingConverter",
+            "request": "launch",
+            "mainClass": "EncodingConverter",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
+            "name": "ConverterUsageExample",
+            "request": "launch",
+            "mainClass": "ConverterUsageExample",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
+            "name": "ShiftJISToUTF8",
+            "request": "launch",
+            "mainClass": "ShiftJISToUTF8",
+            "projectName": "po_modify_2ae47e7a"
+        },
+        {
+            "type": "java",
             "name": "WeatherAPIDemo",
             "request": "launch",
             "mainClass": "WeatherAPIDemo",
