@@ -1,0 +1,15 @@
+---YouTube検索--- 
+
+URL 【https://www.googleapis.com/youtube/v3/search】 
+
+説明 
+
+【YouTube Data API v3 の「searchリソース」にアクセスするためのエンドポイント 　　　　　　主な用途はYouTube上の動画を検索するために使用。主なパラメータの例としては 　　　・part：取得する情報の種類（例: snippet） 
+
+・q：検索キーワード 　　　 
+
+・type：検索対象（例: video, channel, playlist） 　　　 
+
+・maxResults：取得する件数（最大50件） 　　　 　　 
+
+　公式リファレンス 　【YouTube Data API v3: search.list】 

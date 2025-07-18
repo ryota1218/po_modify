@@ -1,0 +1,61 @@
+---WeatherAPI.com---
+
+URL 【https://api.weatherapi.com/v1/】
+
+説明
+【WeatherAPI.comが提供する天気情報API。このファイルでは、過去の天気情報を取得する `history.json` と、未来の天気予報を取得する `forecast.json` の2つのエンドポイントが使用されています。
+主なパラメータ:
+・key: APIキー
+・q: 場所（緯度,経度）
+・dt: 日付 (YYYY-MM-DD形式)
+・lang: 表示言語（例: ja）】
+
+公式リファレンス
+【WeatherAPI.com Documentation】
+
+---Open-Meteo---
+
+URL 【https://api.open-meteo.com/v1/forecast】
+　 【https://archive-api.open-meteo.com/v1/archive】
+
+説明
+【オープンソースの天気予報・過去データを提供するAPI。このファイルでは、未来の予報を取得する `forecast` APIと、過去のデータを取得する `archive` APIが使用されています。APIキーは不要です。
+主なパラメータ:
+・latitude, longitude: 緯度、経度
+・start_date, end_date: 特定の日付を指定 (archive API)
+・forecast_days: 今日から何日先かを指定 (forecast API)
+・daily: 取得したい日毎のデータ項目（最高気温、降水量など）をカンマ区切りで指定】
+
+公式リファレンス
+【Open-Meteo Documentation】
+
+---Visual Crossing Weather---
+
+URL 【https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/】
+
+説明
+【Visual Crossingが提供する天気情報API。指定した場所と日付の過去の天気データを取得するために `timeline` APIが使用されています。
+主なパラメータ:
+・URLパスの一部として緯度、経度、日付を指定
+・key: APIキー
+・unitGroup: 単位系（例: metric）
+・lang: 表示言語（例: ja）
+・include: 取得データの単位（例: days）】
+
+公式リファレンス
+【Visual Crossing Timeline Weather API】
+
+---Tomorrow.io---
+
+URL 【https://api.tomorrow.io/v4/weather/realtime】
+
+説明
+【Tomorrow.ioが提供する天気情報API。このファイルでは、指定した場所の「現在」の天気情報を取得する `realtime` エンドポイントが使用されています。
+主なパラメータ:
+・location: 場所（緯度,経度）
+・apikey: APIキー
+・units: 単位系（デフォルトはmetric）】
+
+公式リファレンス
+【Tomorrow.io Realtime Weather】
+
